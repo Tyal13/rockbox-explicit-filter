@@ -240,6 +240,14 @@ Areas where help is especially appreciated:
 - M4A/OGG format support
 - Improving detection accuracy
 
+## Supporting This Project
+
+If this tool is useful to you, consider supporting its development. Every contribution helps keep the project maintained and funds new features like auto-skip mode and expanded format support.
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=github)](https://github.com/sponsors/Tyal13)
+
+This project is and will always be free and open source.
+
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
