@@ -2,7 +2,7 @@
 
 **Automated explicit content detection and filtering for Rockbox-powered music players.**
 
-Automatically identifies explicit tracks in your music library using free music APIs, tags them for Rockbox's database engine, and provides filtered browsing views and a visual "Explicit" badge on the Now Playing screen — all without modifying audio data or requiring any API keys.
+Automatically identifies explicit tracks in your music library using free music APIs, tags them for Rockbox's database engine, and provides filtered browsing views and a visual "Explicit" badge on the Now Playing screen. No audio data is modified and no API keys are required.
 
 <p align="center">
   <img src="docs/images/now-playing-explicit.jpg" alt="Explicit badge on Now Playing screen" width="300"/>
@@ -11,14 +11,14 @@ Automatically identifies explicit tracks in your music library using free music 
 
 ## Features
 
-- **Zero-config API lookups** — Uses Deezer and YouTube Music APIs. No API keys, no accounts, no setup.
-- **Accurate detection** — Cross-references multiple databases for reliable explicit/clean classification
-- **Rockbox database filtering** — Browse your library as "Clean Library", "Full Library", or "Explicit Only"
-- **Visual Now Playing badge** — Red "Explicit" text appears on the Now Playing screen for explicit tracks
-- **Non-destructive** — Only modifies metadata comment tags. Audio data, artist, title, album, genre, and ReplayGain tags are never touched.
-- **Incremental processing** — Re-run on growing libraries; already-tagged files are skipped automatically
-- **Theme-compatible** — Includes patches for popular themes with a universal WPS patcher for any theme
-- **Arr-stack safe** — Compatible with Lidarr, Sonarr, and other music management tools
+- **Zero-config API lookups**: Uses Deezer and YouTube Music APIs. No API keys, no accounts, no setup.
+- **Accurate detection**: Cross-references multiple databases for reliable explicit/clean classification
+- **Rockbox database filtering**: Browse your library as "Clean Library", "Full Library", or "Explicit Only"
+- **Visual Now Playing badge**: Red "Explicit" text appears on the Now Playing screen for explicit tracks
+- **Non-destructive**: Only modifies metadata comment tags. Audio data, artist, title, album, genre, and ReplayGain tags are never touched.
+- **Incremental processing**: Re-run on growing libraries; already-tagged files are skipped automatically
+- **Theme-compatible**: Includes patches for popular themes with a universal WPS patcher for any theme
+- **Arr-stack safe**: Compatible with Lidarr, Sonarr, and other music management tools
 
 ## Quick Start
 
@@ -100,9 +100,9 @@ The explicit marker is **prepended** to the comment field so Rockbox's WPS engin
 ### Rockbox Integration
 
 **Database Views** (`tagnavi_custom.config`):
-- **Clean Library** — Hides all tracks tagged `explicit=yes`
-- **Full Library** — Shows everything, no filtering
-- **Explicit Only** — Shows only explicit tracks
+- **Clean Library**: Hides all tracks tagged `explicit=yes`
+- **Full Library**: Shows everything, no filtering
+- **Explicit Only**: Shows only explicit tracks
 
 **WPS Theme Badge**:
 The Now Playing screen conditionally displays red "Explicit" text using Rockbox's WPS conditional syntax:
@@ -133,7 +133,7 @@ Explicit: |  Song Title Scrolls Here...        Explicit |
 ## Supported Players
 
 Tested on:
-- **iPod Classic 7th Gen** (modded with iFlash adapter) — Rockbox 4.0
+- **iPod Classic 7th Gen** (modded with iFlash adapter), Rockbox 4.0
 
 Should work on any Rockbox-supported player with database and WPS theme support, including:
 - iPod Classic 5th/6th/7th Gen
@@ -209,10 +209,10 @@ Subsequent runs only process new/untagged files, so incremental updates are fast
 - File structure or naming
 
 ### Compatibility with music managers
-- **Lidarr** — Safe. Lidarr matches files by path and MusicBrainz IDs, ignores comment/grouping fields.
-- **Plex** — Safe. Plex reads its own metadata; comment changes don't affect library matching.
-- **MusicBee/foobar2000** — Safe. Comment field visible but not used for library management.
-- **iTunes/Apple Music** — Safe. Comment field is a standard metadata field.
+- **Lidarr**: Safe. Lidarr matches files by path and MusicBrainz IDs, ignores comment/grouping fields.
+- **Plex**: Safe. Plex reads its own metadata; comment changes don't affect library matching.
+- **MusicBee/foobar2000**: Safe. Comment field visible but not used for library management.
+- **iTunes/Apple Music**: Safe. Comment field is a standard metadata field.
 
 ## Roadmap
 
@@ -250,15 +250,15 @@ This project is and will always be free and open source.
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ## Credits
 
-- **Adam Herrmann** — Creator and maintainer
-- **Rockbox Project** — Open-source firmware that makes this possible
-- **Deezer API** — Primary explicit content data source
-- **YouTube Music** — Secondary/validation data source
-- **Nightpod Theme** by Christian Soffke — Reference theme implementation (CC-BY-SA)
+- **Adam Herrmann**: Creator and maintainer
+- **Rockbox Project**: Open-source firmware that makes this possible
+- **Deezer API**: Primary explicit content data source
+- **YouTube Music**: Secondary/validation data source
+- **Nightpod Theme** by Christian Soffke: Reference theme implementation (CC-BY-SA)
 
 ## Acknowledgments
 
