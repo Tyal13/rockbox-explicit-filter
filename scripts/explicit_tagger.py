@@ -236,6 +236,10 @@ def main():
                         help="Generate CSV report only, don't tag files")
     parser.add_argument("--force", action="store_true",
                         help="Re-check tracks already tagged with EXPLICIT=")
+    parser.add_argument("--playlists", action="store_true",
+                        help="Generate clean/explicit M3U8 playlists after tagging")
+    parser.add_argument("--playlists-dir", type=str, default=None,
+                        help="Directory to write playlist files (default: music_dir/.rockbox/playlists/)")
     args = parser.parse_args()
 
     if not HAS_MUTAGEN:
@@ -366,6 +370,73 @@ def main():
         writer.writerows(results)
 
     print(f"\nReport saved: {report_path}")
+
+    # Generate playlists if requested
+    if args.playlists:
+        generate_playlists(results, music_dir, args.playlists_dir)
+
+
+def generate_playlists(results, music_dir, playlists_dir=None):
+    """Generate M3U8 playlists for clean and explicit tracks."""
+    if playlists_dir:
+        playlist_dir = Path(playlists_dir)
+    else:
+        # Default: .rockbox/playlists/ relative to the music dir's root
+        # For iPod: /Volumes/IPOD/.rockbox/playlists/
+        root = music_dir.parent  # e.g., /Volumes/IPOD
+        playlist_dir = root / ".rockbox" / "playlists"
+
+    playlist_dir.mkdir(parents=True, exist_ok=True)
+
+    clean_tracks = []
+    explicit_tracks = []
+    all_tracks = []
+
+    for r in results:
+        if not r["file"] or r["final"] == "unknown":
+            continue
+        # Build path relative to device root (e.g., /Music/Artist/file.flac)
+        track_path = "/Music/" + r["file"]
+        all_tracks.append(track_path)
+        if r["final"] == "yes":
+            explicit_tracks.append(track_path)
+        else:
+            clean_tracks.append(track_path)
+
+    # Write clean playlist
+    clean_path = playlist_dir / "clean_library.m3u8"
+    with open(clean_path, "w", encoding="utf-8") as f:
+        f.write("#EXTM3U\n")
+        f.write("# Clean Library (explicit tracks excluded)\n")
+        f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+        f.write(f"# Tracks: {len(clean_tracks)}\n")
+        for track in sorted(clean_tracks):
+            f.write(track + "\n")
+
+    # Write explicit-only playlist
+    explicit_path = playlist_dir / "explicit_only.m3u8"
+    with open(explicit_path, "w", encoding="utf-8") as f:
+        f.write("#EXTM3U\n")
+        f.write("# Explicit Only\n")
+        f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+        f.write(f"# Tracks: {len(explicit_tracks)}\n")
+        for track in sorted(explicit_tracks):
+            f.write(track + "\n")
+
+    # Write full library playlist
+    full_path = playlist_dir / "full_library.m3u8"
+    with open(full_path, "w", encoding="utf-8") as f:
+        f.write("#EXTM3U\n")
+        f.write("# Full Library\n")
+        f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+        f.write(f"# Tracks: {len(all_tracks)}\n")
+        for track in sorted(all_tracks):
+            f.write(track + "\n")
+
+    print(f"\nPlaylists generated in: {playlist_dir}")
+    print(f"  clean_library.m3u8:  {len(clean_tracks)} tracks")
+    print(f"  explicit_only.m3u8:  {len(explicit_tracks)} tracks")
+    print(f"  full_library.m3u8:   {len(all_tracks)} tracks")
 
 
 if __name__ == "__main__":
