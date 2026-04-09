@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Environment and secrets
+.env
+*.key
+*.pem
+credentials.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Reports (may contain file paths)
+*.csv
+
+# Music files (never commit)
+*.flac
+*.mp3
+*.m4a
+*.wav
+*.ogg
+*.aac
+
+# Rockbox binary
+*.ipod
