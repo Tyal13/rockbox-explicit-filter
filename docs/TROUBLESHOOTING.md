@@ -81,6 +81,6 @@ Restore the original theme file from your backup or re-download the theme. The W
 
 ## Getting Help
 
-- [Rockbox Forums](https://forums.rockbox.org/) — Community support
-- [Rockbox Wiki](https://www.rockbox.org/wiki/) — Official documentation
-- [GitHub Issues](https://github.com/yourusername/rockbox-explicit-filter/issues) — Bug reports and feature requests
+- [Rockbox Forums](https://forums.rockbox.org/)  -  Community support
+- [Rockbox Wiki](https://www.rockbox.org/wiki/)  -  Official documentation
+- [GitHub Issues](https://github.com/Tyal13/rockbox-explicit-filter/issues)  -  Bug reports and feature requests

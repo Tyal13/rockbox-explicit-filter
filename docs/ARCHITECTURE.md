@@ -77,7 +77,7 @@ FLAC and MP3 files store metadata differently:
 
 #### Phase 3: API Lookup
 
-**Tier 1 — Deezer (Primary)**:
+**Tier 1  -  Deezer (Primary)**:
 ```
 GET https://api.deezer.com/search?q=artist:"X" track:"Y"&limit=5
 Response: { data: [{ explicit_lyrics: true/false, ... }] }
@@ -87,7 +87,7 @@ Response: { data: [{ explicit_lyrics: true/false, ... }] }
 - Rate limit: ~0.2s between requests (self-imposed)
 - Fuzzy matching: compares returned artist/title against query to find best match
 
-**Tier 2 — YouTube Music (Fallback)**:
+**Tier 2  -  YouTube Music (Fallback)**:
 ```python
 yt = YTMusic()  # No auth needed
 results = yt.search(f"{artist} {title}", filter="songs", limit=5)
@@ -152,10 +152,10 @@ Rockbox's database engine supports custom browsing views through `tagnavi_custom
 #### Our Implementation
 
 ```
-# Clean Library — excludes explicit tracks
+# Clean Library  -  excludes explicit tracks
 "Artists" -> artist ? comment !~ "explicit=yes" -> album -> title
 
-# Explicit Only — shows only explicit tracks  
+# Explicit Only  -  shows only explicit tracks  
 "Artists" -> artist ? comment ~ "explicit=yes" -> album -> title
 ```
 
@@ -202,15 +202,15 @@ Testing on iPod Classic 7G revealed that `%ik` (grouping) does not reliably trig
 To prevent the badge from overlapping scrolling titles, two conditional viewports are used:
 
 ```
-# Wide viewport (clean tracks) — renders only when NOT explicit
+# Wide viewport (clean tracks)  -  renders only when NOT explicit
 %V(18,-82,-20,22,8)
 %?if(%ss(0,10,%iC),=,explicit=y)<|%s%al%?it<%it|%fn>>
 
-# Narrow viewport (explicit tracks) — renders only when explicit
+# Narrow viewport (explicit tracks)  -  renders only when explicit
 %V(18,-82,-80,22,8)
 %?if(%ss(0,10,%iC),=,explicit=y)<%s%al%?it<%it|%fn>|>
 
-# Badge viewport — renders only when explicit
+# Badge viewport  -  renders only when explicit
 %V(-72,-82,52,16,3)
 %?if(%ss(0,10,%iC),=,explicit=y)<%arExplicit|>
 ```
@@ -253,15 +253,15 @@ Rockbox's WPS `%ss(start, length, string)` function extracts a substring by posi
 The `adwaitapod` theme (shipped with Rockbox) established the convention of lowercase `explicit` in its WPS conditional. Following this convention ensures compatibility with existing theme implementations and community expectations.
 
 ### Why Deezer as primary API instead of Spotify?
-Spotify requires OAuth app registration (user must create a developer account). Deezer's search API requires zero authentication — the script works out of the box with no setup. For a tool meant to be shared with the community, zero-friction setup was prioritized.
+Spotify requires OAuth app registration (user must create a developer account). Deezer's search API requires zero authentication  -  the script works out of the box with no setup. For a tool meant to be shared with the community, zero-friction setup was prioritized.
 
 ### Why not use a Rockbox plugin?
 Rockbox plugins run on the player hardware (ARM processor, limited memory). Network access is not available on most targets. The detection must happen on a computer with internet access, making an offline tagging approach the only viable option.
 
 ## Limitations
 
-1. **No runtime detection** — Files must be pre-tagged on a computer. Rockbox cannot query APIs.
-2. **Comment field conflicts** — If other tools overwrite the comment field, explicit markers are lost. Re-running the tagger fixes this.
-3. **API accuracy** — Deezer/YouTube Music may disagree with other sources. Some tracks may be misclassified.
-4. **Theme-specific badges** — Each WPS theme must be individually patched. There's no universal overlay system in Rockbox.
-5. **FLAC/MP3 only** — M4A, OGG, and other formats are not yet supported by the tagger.
+1. **No runtime detection**  -  Files must be pre-tagged on a computer. Rockbox cannot query APIs.
+2. **Comment field conflicts**  -  If other tools overwrite the comment field, explicit markers are lost. Re-running the tagger fixes this.
+3. **API accuracy**  -  Deezer/YouTube Music may disagree with other sources. Some tracks may be misclassified.
+4. **Theme-specific badges**  -  Each WPS theme must be individually patched. There's no universal overlay system in Rockbox.
+5. **FLAC/MP3 only**  -  M4A, OGG, and other formats are not yet supported by the tagger.

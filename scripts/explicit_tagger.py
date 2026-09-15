@@ -33,6 +33,7 @@ try:
     from mutagen.flac import FLAC
     from mutagen.mp3 import MP3
     from mutagen.id3 import ID3, COMM, TXXX, TIT1
+    from mutagen.mp4 import MP4
     HAS_MUTAGEN = True
 except ImportError:
     HAS_MUTAGEN = False
@@ -96,7 +97,7 @@ def ytmusic_lookup(yt, artist, title):
 
 
 def similar(a, b):
-    """Simple similarity check — one string contains the core of the other."""
+    """Simple similarity check  -  one string contains the core of the other."""
     a = a.strip().lower()
     b = b.strip().lower()
     if not a or not b:
@@ -154,6 +155,24 @@ def read_tags(filepath):
                 "album": album,
                 "comment": comment,
             }
+        elif ext in (".m4a", ".aac"):
+            audio = MP4(str(filepath))
+            if not audio.tags:
+                return None
+
+            def get_mp4(key):
+                val = audio.tags.get(key)
+                if val:
+                    return str(val[0]) if isinstance(val, list) else str(val)
+                return ""
+
+            return {
+                # \xa9ART is the track artist; aART is the album artist.
+                "artist": get_mp4("\xa9ART") or get_mp4("aART") or "",
+                "title": get_mp4("\xa9nam") or "",
+                "album": get_mp4("\xa9alb") or "",
+                "comment": get_mp4("\xa9cmt") or "",
+            }
     except Exception as e:
         print(f"  WARNING: Could not read tags from {filepath.name}: {e}")
     return None
@@ -171,7 +190,7 @@ def write_explicit_tag(filepath, is_explicit):
             if audio.tags is None:
                 audio.add_tags()
             # Preserve existing comment but replace/add EXPLICIT marker
-            # FLAC tags can be lowercase or uppercase — check both
+            # FLAC tags can be lowercase or uppercase  -  check both
             existing = ""
             for key in ("COMMENT", "comment"):
                 val = audio.tags.get(key)
@@ -204,6 +223,25 @@ def write_explicit_tag(filepath, is_explicit):
             audio.tags.add(TIT1(encoding=3, text=[grouping] if grouping else [""]))
             audio.save()
 
+        elif ext in (".m4a", ".aac"):
+            audio = MP4(str(filepath))
+            if audio.tags is None:
+                audio.add_tags()
+            existing_comment = ""
+            val = audio.tags.get("\xa9cmt")
+            if val:
+                existing_comment = str(val[0]) if isinstance(val, list) else str(val)
+            existing_comment = _strip_explicit_marker(existing_comment)
+            new_comment = f"{label}; {existing_comment}".strip("; ") if existing_comment else label
+            audio.tags["\xa9cmt"] = [new_comment]
+            # \xa9grp is the MP4 equivalent of ID3's TIT1 (Grouping).
+            audio.tags["\xa9grp"] = [grouping] if grouping else [""]
+            # rtng: 1 = explicit, 2 = clean. Read by Plex, iTunes and Apple Music.
+            # NOT reliably indexed by Rockbox on iPod 6G/7G, so the comment tag
+            # above remains the only field the database filter can use.
+            audio.tags["rtng"] = [1 if is_explicit else 2]
+            audio.save()
+
         return True
     except Exception as e:
         print(f"  ERROR writing tag to {filepath.name}: {e}")
@@ -220,8 +258,12 @@ def _strip_explicit_marker(comment):
 def scan_library(music_dir):
     """Find all audio files in the music directory."""
     files = []
-    for ext in ("*.flac", "*.mp3"):
+    for ext in ("*.flac", "*.mp3", "*.m4a", "*.aac"):
         files.extend(Path(music_dir).rglob(ext))
+    # macOS writes AppleDouble sidecars ("._Track.m4a") next to every file on
+    # FAT32 volumes. They carry a matching extension but no audio, so mutagen
+    # fails on them with "moov atom not found".
+    files = [f for f in files if not f.name.startswith("._")]
     return sorted(files)
 
 
@@ -353,9 +395,9 @@ def main():
     print(f"Total: {len(files)} files")
 
     if args.dry_run:
-        print("\n(DRY RUN — no files were modified)")
+        print("\n(DRY RUN  -  no files were modified)")
     elif args.report_only:
-        print("\n(REPORT ONLY — no files were modified)")
+        print("\n(REPORT ONLY  -  no files were modified)")
 
     # Write CSV report
     report_dir = Path(os.path.dirname(os.path.dirname(__file__))) / "documentation"

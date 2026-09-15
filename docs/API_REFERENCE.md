@@ -136,4 +136,4 @@ The algorithm errs on the side of flagging content as explicit. If either API sa
 
 ## Privacy
 
-Both APIs are queried over HTTPS. The only data sent is the artist name and track title — no personal information, no file contents, no listening history.
+Both APIs are queried over HTTPS. The only data sent is the artist name and track title  -  no personal information, no file contents, no listening history.

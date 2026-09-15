@@ -12,9 +12,9 @@ This directory contains WPS theme patches that add the "Explicit" badge to popul
 
 Each patch adds three elements to a WPS theme file:
 
-1. **Wide title viewport** — Full-width scrolling title for clean tracks
-2. **Narrow title viewport** — Shortened title for explicit tracks (makes room for badge)
-3. **Explicit badge viewport** — Red "Explicit" text, right-aligned on the title line
+1. **Wide title viewport**  -  Full-width scrolling title for clean tracks
+2. **Narrow title viewport**  -  Shortened title for explicit tracks (makes room for badge)
+3. **Explicit badge viewport**  -  Red "Explicit" text, right-aligned on the title line
 
 ### The Core WPS Code
 
@@ -42,11 +42,11 @@ Each patch adds three elements to a WPS theme file:
 
 To add the Explicit badge to any theme:
 
-1. **Find the title viewport** — Look for `%it` (track title tag) in the WPS file
-2. **Note the viewport coordinates** — The `%V(x, y, width, height, font)` line above it
-3. **Duplicate the viewport** — Create a wide (original) and narrow (reduced right margin) version
-4. **Add conditionals** — Wrap each in `%?if(%ss(0,10,%iC),=,explicit=y)` with opposite logic
-5. **Add the badge viewport** — Position it in the space freed by the narrow title
+1. **Find the title viewport**  -  Look for `%it` (track title tag) in the WPS file
+2. **Note the viewport coordinates**  -  The `%V(x, y, width, height, font)` line above it
+3. **Duplicate the viewport**  -  Create a wide (original) and narrow (reduced right margin) version
+4. **Add conditionals**  -  Wrap each in `%?if(%ss(0,10,%iC),=,explicit=y)` with opposite logic
+5. **Add the badge viewport**  -  Position it in the space freed by the narrow title
 
 ### Key Parameters to Adjust
 

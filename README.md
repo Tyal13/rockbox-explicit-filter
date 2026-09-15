@@ -9,6 +9,14 @@ Automatically identifies explicit tracks in your music library using free music 
   <img src="docs/images/now-playing-clean.jpg" alt="Clean track - full width title" width="300"/>
 </p>
 
+### The tagger in action
+
+<p align="center">
+  <img src="docs/images/tagger-run.svg" alt="explicit_tagger.py classifying a small library" width="760"/>
+</p>
+
+*Real output, captured from an actual run by `tools/make_shots.py`.*
+
 ## Features
 
 - **Zero-config API lookups**: Uses Deezer and YouTube Music APIs. No API keys, no accounts, no setup.
@@ -51,17 +59,22 @@ Copy `tagnavi_custom.config` to your player's `.rockbox/` directory:
 cp rockbox/tagnavi_custom.config /Volumes/YOURPLAYER/.rockbox/
 ```
 
-### 4. Install theme patch (optional)
+### 4. Add the Now Playing badge (optional)
 
-For the Now Playing "Explicit" badge, apply a theme patch:
+There is no patcher script yet. Edit your theme's `.wps` by hand and add one
+conditional where you want the badge to appear:
 
-```bash
-# For Nightpod theme
-cp themes/Nightpod.wps /Volumes/YOURPLAYER/.rockbox/wps/Nightpod.wps
-
-# For any other theme, use the universal patcher
-python3 scripts/patch_wps.py /Volumes/YOURPLAYER/.rockbox/wps/YourTheme.wps
 ```
+%?if(%ss(0,10,%iC),=,explicit=y)<%arExplicit|>
+```
+
+See [themes/README.md](themes/README.md) for placement and for the reserved-space
+trick that gives clean tracks a full-width title.
+
+**Use 10 characters, not 8.** `%ss(0,8,%iC)` compared against `explicit` matches
+the first 8 characters of `explicit=no` just as well as `explicit=yes`, so the
+badge renders on every tagged track. Comparing 10 characters against
+`explicit=y` is what actually distinguishes them.
 
 ### 5. Rebuild database
 
@@ -94,6 +107,11 @@ The tagger writes to two metadata fields:
 |-------|------------------|---------------|---------|
 | `COMMENT` | `explicit=yes; [existing]` | `explicit=no; [existing]` | Database filtering via `tagnavi_custom.config` |
 | `GROUPING` | `EXPLICIT` | *(empty)* | Alternative WPS conditional |
+| `rtng` (M4A only) | `1` | `2` | Plex / iTunes / Apple Music compatibility |
+
+On M4A the `rtng` atom is written for other players, but Rockbox on iPod 6G/7G
+does not reliably index it. The comment tag is the only field the database
+filter can use.
 
 The explicit marker is **prepended** to the comment field so Rockbox's WPS engine can check the first characters using `%ss(0,10,%iC)`.
 
@@ -127,7 +145,7 @@ Explicit: |  Song Title Scrolls Here...        Explicit |
 |--------|-----------|------|-------|
 | FLAC | Vorbis Comments | Yes | Yes |
 | MP3 | ID3v2 | Yes | Yes |
-| M4A/AAC | MP4 Tags | Planned | Planned |
+| M4A/AAC | MP4 Tags | Yes | Yes |
 | OGG | Vorbis Comments | Planned | Planned |
 
 ## Supported Players
@@ -151,20 +169,18 @@ rockbox-explicit-filter/
 ├── LICENSE                        # MIT License
 ├── requirements.txt               # Python dependencies
 ├── scripts/
-│   ├── explicit_tagger.py         # Main tagger script
-│   └── patch_wps.py               # Universal WPS theme patcher
+│   └── explicit_tagger.py         # Main tagger script
 ├── rockbox/
-│   └── tagnavi_custom.config      # Database filter views
+│   ├── tagnavi_custom.config      # Database filter views
+│   └── plugins/
+│       └── clean_mode.lua         # Clean-only playlist generator
 ├── themes/
-│   ├── Nightpod.wps.patch         # Patch for Nightpod theme
 │   └── README.md                  # Theme patching guide
-├── docs/
-│   ├── ARCHITECTURE.md            # Technical deep-dive
-│   ├── TROUBLESHOOTING.md         # Common issues and fixes
-│   ├── API_REFERENCE.md           # Deezer/YouTube Music API details
-│   └── images/                    # Screenshots and diagrams
-└── examples/
-    └── sample_report.csv          # Example tagger output
+└── docs/
+    ├── ARCHITECTURE.md            # Technical deep-dive
+    ├── TROUBLESHOOTING.md         # Common issues and fixes
+    ├── API_REFERENCE.md           # Deezer/YouTube Music API details
+    └── images/                    # Screenshots
 ```
 
 ## Configuration
@@ -223,7 +239,8 @@ Subsequent runs only process new/untagged files, so incremental updates are fast
 - [x] WPS theme "Explicit" badge
 - [x] Dynamic title width (full width for clean, narrowed for explicit)
 - [x] Incremental processing (skip already-tagged files)
-- [ ] M4A/AAC and OGG Vorbis support
+- [x] M4A/AAC support (comment marker, `\xa9grp` grouping, and the `rtng` atom)
+- [ ] OGG Vorbis support
 - [ ] Universal WPS patcher for any theme
 - [ ] Auto-skip explicit tracks mode (for work/family environments)
 - [ ] Lyrics-based profanity detection via Genius API
